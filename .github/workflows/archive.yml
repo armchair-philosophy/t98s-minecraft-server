@@ -26,7 +26,7 @@ jobs:
         run: |
           yarn --cwd gcf-minecraft-starter
           make archive
-          mv gcf-minecraft-starter.zip $TARGET_ARCHIVE_NAME
+          mv gcf-minecraft-starter/dist/gcf-minecraft-starter.zip $TARGET_ARCHIVE_NAME
       - uses: actions/upload-artifact@v3
         with:
           name: gcf-archive

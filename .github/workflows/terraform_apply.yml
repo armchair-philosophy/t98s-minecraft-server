@@ -2,6 +2,9 @@ name: terraform apply
 on:
   push:
     branches: ["main"]
+permissions:
+  contents: read
+  id-token: read
 jobs:
   plan:
     uses: ./.github/workflows/terraform.yml

@@ -33,6 +33,15 @@ jobs:
           # 実装を見ると空でデフォルト値を参照できることがわかる
           # https://github.com/actions/checkout/blob/2541b1294d2704b0964813337f33b291d3f8596b/src/input-helper.ts#L59-L76
           ref: ${{ inputs.ref }}
+      - uses: hashicorp/setup-terraform@v2
+      - name: Setup github-comment & tfcmt
+        run: |
+          cd $(mktemp -d)
+          wget https://github.com/suzuki-shunsuke/tfcmt/releases/download/v3.2.2-0/tfcmt_linux_amd64.tar.gz
+          tar -vxf tfcmt_linux_amd64.tar.gz tfcmt
+          wget https://github.com/suzuki-shunsuke/github-comment/releases/download/v4.1.1/github-comment_4.1.1_linux_amd64.tar.gz
+          tar -vxf ./github-comment_4.1.1_linux_amd64.tar.gz github-comment
+          sudo mv tfcmt github-comment /usr/bin
       - name: "Authenticate to Google Cloud"
         uses: "google-github-actions/auth@v0.7.1"
         with:
@@ -48,14 +57,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: gcf-archive
-      - name: Install tools
-        run: |
-          cd $(mktemp -d)
-          wget https://github.com/suzuki-shunsuke/tfcmt/releases/download/v3.2.2-0/tfcmt_linux_amd64.tar.gz
-          tar -vxf tfcmt_linux_amd64.tar.gz tfcmt
-          wget https://github.com/suzuki-shunsuke/github-comment/releases/download/v4.1.1/github-comment_4.1.1_linux_amd64.tar.gz
-          tar -vxf ./github-comment_4.1.1_linux_amd64.tar.gz github-comment
-          sudo mv tfcmt github-comment /usr/bin
       - name: terraform ${{ inputs.command }}
         run: |
           args=""

@@ -34,13 +34,14 @@ jobs:
         with:
           workload_identity_provider: 'projects/${{ secrets.GCLOUD_PROJECT_ID }}/locations/global/workloadIdentityPools/cicd/providers/github-actions'
           service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
+      - name: terraform init
+        run: terraform init -input=false
       - name: terraform ${{ inputs.command }}
         run: |
-          terraform init
           if [ "${{ inputs.command }}" == "apply" ]; then
-            terraform apply -auto-approve
+            terraform apply -input=false -auto-approve
           else
-            terraform ${{ inputs.command }}
+            terraform ${{ inputs.command }} -input=false
           fi
         env:
           TF_VAR_discord_apikey: ${{ secrets.DISCORD_API_KEY }}

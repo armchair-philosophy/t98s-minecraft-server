@@ -44,7 +44,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: gcf-archive
-      - uses: Install tfcmt
+      - name: Install tfcmt
         run: |
           cd $(mktemp -d)
           wget https://github.com/suzuki-shunsuke/tfcmt/releases/download/v3.2.2-0/tfcmt_linux_amd64.tar.gz

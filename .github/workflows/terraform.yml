@@ -10,6 +10,8 @@ on:
     secrets:
       GCLOUD_PROJECT:
         required: true
+      GCLOUD_PROJECT_ID:
+        required: true
       DISCORD_API_KEY:
         required: true
       DISCORD_PUBLIC_KEY:
@@ -30,7 +32,7 @@ jobs:
       - name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.7.1'
         with:
-          workload_identity_provider: 'projects/${{ secrets.GCLOUD_PROJECT }}/locations/global/workloadIdentityPools/cicd/providers/github-actions'
+          workload_identity_provider: 'projects/${{ secrets.GCLOUD_PROJECT_ID }}/locations/global/workloadIdentityPools/cicd/providers/github-actions'
           service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
       - name: terraform ${{ inputs.command }}
         run: |

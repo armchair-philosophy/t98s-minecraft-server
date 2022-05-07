@@ -26,7 +26,12 @@ jobs:
           workload_identity_provider: 'projects/${{ inputs.gcloudProject }}/locations/global/workloadIdentityPools/cicd/providers/github-actions'
           service_account: 'github-actions-${{ inputs.command }}@${{ inputs.gcloudProject }}.iam.gserviceaccount.com'
       - name: terraform ${{ inputs.command }}
-        run: yes | terraform ${{ inputs.command }}
+        run: |
+          opts=""
+          if [ "${{ inputs.command }}" == "apply" ]; then
+            opts="-auto-approve"
+          fi
+          terraform ${{ inputs.command }} "$opts"
         env:
           TF_VAR_discord_apikey: ${{ secrets.DISCORD_API_KEY }}
           TF_VAR_discord_public_key: ${{ secrets.DISCORD_PUBLIC_KEY }}

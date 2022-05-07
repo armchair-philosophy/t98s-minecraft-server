@@ -35,6 +35,7 @@ jobs:
           workload_identity_provider: 'projects/${{ secrets.GCLOUD_PROJECT_ID }}/locations/global/workloadIdentityPools/cicd/providers/github-actions'
           service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
           export_environment_variables: true
+      - run: gcloud auth lits
       - name: terraform init
         run: terraform init -input=false
       - name: terraform ${{ inputs.command }}

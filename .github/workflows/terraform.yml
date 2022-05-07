@@ -44,7 +44,7 @@ jobs:
       - name: Calculate hash of gcf-minecraft-starter
         run: |
           echo -n "TF_VAR_gcf_minecraft_starter_zip_filepath=" >> $GITHUB_ENV
-          ./.github/calculate-archive-hash.sh >> $GITHUB_ENV
+          ./.github/calculate-archive-name.sh >> $GITHUB_ENV
       - uses: actions/download-artifact@v3
         with:
           name: gcf-archive

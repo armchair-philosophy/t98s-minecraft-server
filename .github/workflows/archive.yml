@@ -21,12 +21,22 @@ jobs:
       - name: Calculate hash of gcf-minecraft-starter
         run: |
           echo -n "TARGET_ARCHIVE_NAME=" >> $GITHUB_ENV
-          ./.github/calculate-archive-hash.sh >> $GITHUB_ENV
+          ./.github/calculate-archive-name.sh >> $GITHUB_ENV
+      - name: Use build cache
+        uses: actions/cache@v3
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ${{ env.TARGET_ARCHIVE_NAME }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.TARGET_ARCHIVE_NAME }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ env.TARGET_ARCHIVE_NAME }}
       - name: Build and archive
         run: |
-          yarn --cwd gcf-minecraft-starter
-          make archive
-          mv gcf-minecraft-starter/dist/gcf-minecraft-starter.zip $TARGET_ARCHIVE_NAME
+          if [ ! -e $TARGET_ARCHIVE_NAME ]; then
+            yarn --cwd gcf-minecraft-starter
+            make archive
+            mv gcf-minecraft-starter/dist/gcf-minecraft-starter.zip $TARGET_ARCHIVE_NAME
+          fi
       - uses: actions/upload-artifact@v3
         with:
           name: gcf-archive

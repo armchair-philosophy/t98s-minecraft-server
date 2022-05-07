@@ -34,11 +34,11 @@ jobs:
           service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
       - name: terraform ${{ inputs.command }}
         run: |
-          opts=""
           if [ "${{ inputs.command }}" == "apply" ]; then
-            opts="-auto-approve"
+            terraform apply -auto-approve
+          else
+            terraform ${{ inputs.command }}
           fi
-          terraform ${{ inputs.command }} "$opts"
         env:
           TF_VAR_discord_apikey: ${{ secrets.DISCORD_API_KEY }}
           TF_VAR_discord_public_key: ${{ secrets.DISCORD_PUBLIC_KEY }}

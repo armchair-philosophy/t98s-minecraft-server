@@ -1,0 +1,58 @@
+on:
+  workflow_call:
+    inputs:
+      command:
+        required: true
+        type: string
+      ref:
+        required: false
+        type: string
+    secrets:
+      GCLOUD_PROJECT:
+        required: true
+      GCLOUD_PROJECT_ID:
+        required: true
+      DISCORD_API_KEY:
+        required: true
+      DISCORD_PUBLIC_KEY:
+        required: true
+      DISCORD_APPLICATION_ID:
+        required: true
+
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # 実装を見ると空でデフォルト値を参照できることがわかる
+          # https://github.com/actions/checkout/blob/2541b1294d2704b0964813337f33b291d3f8596b/src/input-helper.ts#L59-L76
+          ref: ${{ inputs.ref }}
+      - name: Calculate hash of gcf-minecraft-starter
+        run: |
+          echo -n "TF_VAR_gcf_minecraft_starter_zip_filepath=" >> $GITHUB_ENV
+          find ./gcf-minecraft-starter -type f | sort | xargs sha256sum | md5sum | awk '{ print $1 }' >> $GITHUB_ENV
+      - uses: actions/download-artifact@v3
+        with:
+          name: gcf-archive
+      - name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.7.1'
+        with:
+          workload_identity_provider: 'projects/${{ secrets.GCLOUD_PROJECT_ID }}/locations/global/workloadIdentityPools/cicd/providers/github-actions'
+          service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
+          export_environment_variables: true
+      - name: terraform init
+        run: terraform init -input=false
+      - name: terraform ${{ inputs.command }}
+        run: |
+          if [ "${{ inputs.command }}" == "apply" ]; then
+            terraform apply -input=false -auto-approve
+          else
+            terraform ${{ inputs.command }} -input=false
+          fi
+        env:
+          TF_VAR_discord_apikey: ${{ secrets.DISCORD_API_KEY }}
+          TF_VAR_discord_public_key: ${{ secrets.DISCORD_PUBLIC_KEY }}
+          TF_VAR_discord_application_id: ${{ secrets.DISCORD_APPLICATION_ID }}
+          TF_VAR_github_repository: ${{ github.repository }}

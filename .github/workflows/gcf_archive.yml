@@ -1,0 +1,33 @@
+name: archive
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: false
+        type: string
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # 実装を見ると空でデフォルト値を参照できることがわかる
+          # https://github.com/actions/checkout/blob/2541b1294d2704b0964813337f33b291d3f8596b/src/input-helper.ts#L59-L76
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v3
+      - name: Calculate hash of gcf-minecraft-starter
+        run: |
+          echo -n "TARGET_ARCHIVE_NAME=" >> $GITHUB_ENV
+          find ./gcf-minecraft-starter -type f | sort | xargs sha256sum | md5sum | awk '{ print $1 }' >> $GITHUB_ENV
+      - name: Build and archive
+        run: |
+          yarn --cwd gcf-minecraft-starter
+          make archive
+          mv gcf-minecraft-starter.zip $TARGET_ARCHIVE_NAME
+      - uses: actions/upload-artifact@v3
+        with:
+          name: gcf-archive
+          path: ${{ env.TARGET_ARCHIVE_NAME }}

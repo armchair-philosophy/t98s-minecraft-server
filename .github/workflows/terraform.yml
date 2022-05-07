@@ -34,6 +34,7 @@ jobs:
           service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
       - name: terraform ${{ inputs.command }}
         run: |
+          terraform init
           if [ "${{ inputs.command }}" == "apply" ]; then
             terraform apply -auto-approve
           else

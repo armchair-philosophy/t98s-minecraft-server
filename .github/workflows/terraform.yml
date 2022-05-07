@@ -53,9 +53,9 @@ jobs:
       - name: terraform ${{ inputs.command }}
         run: |
           if [ "${{ inputs.command }}" == "apply" ]; then
-            terraform apply -input=false -auto-approve
+            tfcmt apply -- terraform apply -input=false -auto-approve
           else
-            terraform ${{ inputs.command }} -input=false
+            tfcmt ${{ inputs.command }} -- terraform ${{ inputs.command }} -input=false
           fi
         env:
           TF_VAR_discord_apikey: ${{ secrets.DISCORD_API_KEY }}

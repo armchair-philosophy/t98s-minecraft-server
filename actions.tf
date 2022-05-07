@@ -40,7 +40,7 @@ resource "google_service_account_iam_binding" "github-actions-apply" {
   members = [
     "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.cicd.name}/attribute.repository/${var.github_repository}"
   ]
-  condition = {
+  condition {
     title      = "branch restriction"
     expression = "attribute.event_name == \"push\" and attribute.ref == \"refs/heads/main\""
   }

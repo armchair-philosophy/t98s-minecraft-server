@@ -14,10 +14,10 @@ resource "google_iam_workload_identity_pool_provider" "github-actions" {
     "google.subject"       = "assertion.sub"
     "attribute.actor"      = "assertion.actor"
     "attribute.aud"        = "assertion.aud"
-    "attribute.repository" = "assertion.repository"
     "attribute.ref"        = "assertion.ref"
     "attribute.event_name" = "assertion.event_name"
   }
+  attribute_condition = "assertion.repository == \"${var.github_repository}\""
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
   }
@@ -38,11 +38,11 @@ resource "google_service_account_iam_binding" "github-actions-apply" {
   role               = "roles/iam.workloadIdentityUser"
   # 属性値による絞り込み https://cloud.google.com/iam/docs/workload-identity-federation#impersonation
   members = [
-    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.cicd.name}/attribute.repository/${var.github_repository}"
+    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.cicd.name}/attribute.event_name/push"
   ]
   condition {
     title      = "branch restriction"
-    expression = "attribute.event_name == \"push\" and attribute.ref == \"refs/heads/main\""
+    expression = "request.auth.claims.assertion.ref == \"refs/heads/main\""
   }
 }
 
@@ -51,7 +51,7 @@ resource "google_service_account_iam_binding" "github-actions-plan" {
   role               = "roles/iam.workloadIdentityUser"
   # 属性値による絞り込み https://cloud.google.com/iam/docs/workload-identity-federation#impersonation
   members = [
-    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.cicd.name}/attribute.repository/${var.github_repository}"
+    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.cicd.name}/*"
   ]
 }
 

@@ -8,7 +8,7 @@ permissions:
 jobs:
   archive:
     uses: ./.github/workflows/archive.yml
-  plan:
+  apply:
     needs: archive
     uses: ./.github/workflows/terraform.yml
     with:

@@ -5,6 +5,7 @@ on:
 permissions:
   contents: read
   id-token: write
+  pull-requests: write
 jobs:
   archive:
     uses: ./.github/workflows/archive.yml
@@ -16,6 +17,7 @@ jobs:
     uses: ./.github/workflows/terraform.yml
     with:
       command: plan
+      tfcmt: true
     secrets:
       GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
       GCLOUD_PROJECT_ID: ${{ secrets.GCLOUD_PROJECT_ID }}

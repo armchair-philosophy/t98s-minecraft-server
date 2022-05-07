@@ -7,6 +7,10 @@ on:
       ref:
         required: false
         type: string
+      tfcmt:
+        required: true
+        default: false
+        type: boolean
     secrets:
       GCLOUD_PROJECT:
         required: true
@@ -52,12 +56,17 @@ jobs:
           sudo mv tfcmt /usr/bin
       - name: terraform ${{ inputs.command }}
         run: |
+          args=""
           if [ "${{ inputs.command }}" == "apply" ]; then
-            tfcmt apply -- terraform apply -input=false -auto-approve
+            args="-auto-approve"
+          fi
+          if [ "${{ inputs.tfcmt }}" == "true" ]; then
+            tfcmt ${{ inputs.command }} | terraform ${{ inputs.command }} -input=false $args
           else
-            tfcmt ${{ inputs.command }} -- terraform ${{ inputs.command }} -input=false
+            terraform ${{ inputs.command }} -input=false $args
           fi
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           TF_VAR_discord_apikey: ${{ secrets.DISCORD_API_KEY }}
           TF_VAR_discord_public_key: ${{ secrets.DISCORD_PUBLIC_KEY }}
           TF_VAR_discord_application_id: ${{ secrets.DISCORD_APPLICATION_ID }}

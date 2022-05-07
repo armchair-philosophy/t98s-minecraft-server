@@ -29,6 +29,14 @@ jobs:
           # 実装を見ると空でデフォルト値を参照できることがわかる
           # https://github.com/actions/checkout/blob/2541b1294d2704b0964813337f33b291d3f8596b/src/input-helper.ts#L59-L76
           ref: ${{ inputs.ref }}
+      - name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v0.7.1"
+        with:
+          workload_identity_provider: "projects/${{ secrets.GCLOUD_PROJECT_ID }}/locations/global/workloadIdentityPools/cicd/providers/github-actions"
+          service_account: "github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com"
+          export_environment_variables: true
+      - name: terraform init
+        run: terraform init -input=false
       - name: Calculate hash of gcf-minecraft-starter
         run: |
           echo -n "TF_VAR_gcf_minecraft_starter_zip_filepath=" >> $GITHUB_ENV
@@ -36,14 +44,12 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: gcf-archive
-      - name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v0.7.1'
-        with:
-          workload_identity_provider: 'projects/${{ secrets.GCLOUD_PROJECT_ID }}/locations/global/workloadIdentityPools/cicd/providers/github-actions'
-          service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
-          export_environment_variables: true
-      - name: terraform init
-        run: terraform init -input=false
+      - uses: Install tfcmt
+        run: |
+          cd $(mktemp -d)
+          wget https://github.com/suzuki-shunsuke/tfcmt/releases/download/v3.2.2-0/tfcmt_linux_amd64.tar.gz
+          tar -vxf tfcmt_linux_amd64.tar.gz tfcmt
+          sudo mv tfcmt /usr/bin
       - name: terraform ${{ inputs.command }}
         run: |
           if [ "${{ inputs.command }}" == "apply" ]; then

@@ -21,7 +21,7 @@ jobs:
       - name: Calculate hash of gcf-minecraft-starter
         run: |
           echo -n "TARGET_ARCHIVE_NAME=" >> $GITHUB_ENV
-          ./.github/calculate-archive-hash.zip >> $GITHUB_ENV
+          ./.github/calculate-archive-hash.sh >> $GITHUB_ENV
       - name: Build and archive
         run: |
           yarn --cwd gcf-minecraft-starter

@@ -75,6 +75,19 @@ resource "google_project_iam_member" "github-actions-apply" {
 resource "google_project_iam_member" "github-actions-plan" {
   project  = local.project
   member   = "serviceAccount:${google_service_account.github-actions-plan.email}"
-  for_each = toset([])
+  for_each = toset([
+    "roles/viewer",
+    "roles/iam.serviceAccountUser"
+  ])
   role     = each.key
+}
+
+resource "google_storage_bucket_iam_member" "github-actions" {
+  bucket = "${ local.project }-terraform"
+  role     = "roles/storage.objectAdmin"
+  for_each = toset([
+    google_service_account.github-actions-plan.email,
+    google_service_account.github-actions-apply.email
+  ])
+  member   = "serviceAccount:${each.key}"
 }

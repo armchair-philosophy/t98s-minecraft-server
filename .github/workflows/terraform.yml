@@ -29,15 +29,19 @@ jobs:
           # 実装を見ると空でデフォルト値を参照できることがわかる
           # https://github.com/actions/checkout/blob/2541b1294d2704b0964813337f33b291d3f8596b/src/input-helper.ts#L59-L76
           ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.7.1'
         with:
           workload_identity_provider: 'projects/${{ secrets.GCLOUD_PROJECT_ID }}/locations/global/workloadIdentityPools/cicd/providers/github-actions'
           service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
           export_environment_variables: true
-      - run: gcloud auth list
-      - run: gcloud config set project t98s-mc-testbed
-      - run: gcloud compute instances list
+      - name: Archive cloud functions
+        run: |
+          yarn --cwd gcf-minecraft-starter
+          make archive
       - name: terraform init
         run: terraform init -input=false
       - name: terraform ${{ inputs.command }}

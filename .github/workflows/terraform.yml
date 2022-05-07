@@ -44,7 +44,7 @@ jobs:
       - name: Calculate hash of gcf-minecraft-starter
         run: |
           echo -n "TF_VAR_gcf_minecraft_starter_zip_filepath=" >> $GITHUB_ENV
-          find ./gcf-minecraft-starter -type f | sort | xargs sha256sum | md5sum | awk '{ print $1 }' >> $GITHUB_ENV
+          ./.github/calculate-archive-hash.zip >> $GITHUB_ENV
       - uses: actions/download-artifact@v3
         with:
           name: gcf-archive
@@ -61,7 +61,7 @@ jobs:
             args="-auto-approve"
           fi
           if [ "${{ inputs.tfcmt }}" == "true" ]; then
-            tfcmt ${{ inputs.command }} | terraform ${{ inputs.command }} -input=false $args
+            tfcmt ${{ inputs.command }} -- terraform ${{ inputs.command }} -input=false $args
           else
             terraform ${{ inputs.command }} -input=false $args
           fi

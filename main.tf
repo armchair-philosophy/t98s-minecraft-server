@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "t98s-minecraft-server-terraform"
+    bucket = "t98s-mc-testbed-terraform"
   }
   required_providers {
     google = {
@@ -11,7 +11,7 @@ terraform {
 }
 
 locals {
-  project = "t98s-minecraft-server"
+  project = "t98s-mc-testbed"
   region  = "asia-northeast1"
   zone    = "asia-northeast1-a"
 }

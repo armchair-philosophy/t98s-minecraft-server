@@ -1,6 +1,9 @@
 name: terraform plan
 on:
   pull_request:
+permissions:
+  contents: read
+  id-token: read
 jobs:
   plan:
     uses: ./.github/workflows/terraform.yml

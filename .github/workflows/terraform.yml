@@ -36,6 +36,7 @@ jobs:
           service_account: 'github-actions-${{ inputs.command }}@${{ secrets.GCLOUD_PROJECT }}.iam.gserviceaccount.com'
           export_environment_variables: true
       - run: gcloud auth list
+      - run: gcloud compute instances list
       - name: terraform init
         run: terraform init -input=false
       - name: terraform ${{ inputs.command }}

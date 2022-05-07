@@ -48,12 +48,14 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: gcf-archive
-      - name: Install tfcmt
+      - name: Install tools
         run: |
           cd $(mktemp -d)
           wget https://github.com/suzuki-shunsuke/tfcmt/releases/download/v3.2.2-0/tfcmt_linux_amd64.tar.gz
           tar -vxf tfcmt_linux_amd64.tar.gz tfcmt
-          sudo mv tfcmt /usr/bin
+          wget https://github.com/suzuki-shunsuke/github-comment/releases/download/v4.1.1/github-comment_4.1.1_linux_amd64.tar.gz
+          tar -vxf ./github-comment_4.1.1_linux_amd64.tar.gz github-comment
+          sudo mv tfcmt github-comment /usr/bin
       - name: terraform ${{ inputs.command }}
         run: |
           args=""
@@ -61,6 +63,7 @@ jobs:
             args="-auto-approve"
           fi
           if [ "${{ inputs.tfcmt }}" == "true" ]; then
+            github-comment hide
             tfcmt ${{ inputs.command }} -- terraform ${{ inputs.command }} -input=false $args
           else
             terraform ${{ inputs.command }} -input=false $args

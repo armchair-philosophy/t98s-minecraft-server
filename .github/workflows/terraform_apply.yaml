@@ -1,0 +1,13 @@
+name: terraform apply
+on:
+  push:
+    branches: ["main"]
+jobs:
+  plan:
+    uses: ./.github/workflows/terraform.yml
+    with:
+      command: apply
+    secrets:
+      DISCORD_API_KEY: ${{ secrets.DISCORD_API_KEY }}
+      DISCORD_PUBLIC_KEY: ${{ secrets.DISCORD_PUBLIC_KEY }}
+      DISCORD_APPLICATION_ID: ${{ secrets.DISCORD_APPLICATION_ID }}

@@ -1,0 +1,12 @@
+name: terraform plan
+on:
+  pull_request:
+jobs:
+  plan:
+    uses: ./.github/workflows/terraform.yml
+    with:
+      command: plan
+    secrets:
+      DISCORD_API_KEY: dummy
+      DISCORD_PUBLIC_KEY: dummy
+      DISCORD_APPLICATION_ID: dummy

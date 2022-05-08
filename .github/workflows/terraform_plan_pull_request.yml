@@ -10,7 +10,7 @@ jobs:
   archive:
     # リポジトリ内ならいつでも走らせる
     # フォークでは context が異なり動かない。pull_request_target で代用する
-    if: ${{ github.event.head.repo.full_name == "piyopiyo" }} # 絶対失敗
+    if: ${{ github.event.head.repo.full_name == 'piyopiyo' }} # 絶対失敗
     uses: ./.github/workflows/archive.yml
   plan:
     needs: archive

@@ -6,8 +6,6 @@ permissions:
   contents: read
   id-token: write
 jobs:
-  archive:
-    uses: ./.github/workflows/archive.yml
   apply:
     needs: archive
     uses: ./.github/workflows/terraform.yml

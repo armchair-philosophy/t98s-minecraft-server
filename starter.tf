@@ -106,3 +106,7 @@ resource "google_cloudfunctions_function_iam_member" "minecraft-starter-http_inv
   role   = "roles/cloudfunctions.invoker"
   member = "allUsers"
 }
+
+resource "google_service_account" "add-test" {
+  account_id   = "add-test"
+}

@@ -1,3 +1,3 @@
 resource "google_service_account" "asdf" {
-  account_id = "asdf"
+  account_id = "asdf-script"
 }

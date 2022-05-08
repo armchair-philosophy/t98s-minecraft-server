@@ -1,10 +1,6 @@
 name: terraform plan
 on:
   pull_request_target:
-    # fork でも origin の context で実行されるようにする
-    # 当然 unsafe であるので、権限を持つ人が review_request を行なったときに自動で走るという整理にする
-    # https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
-    types: [review_requested]
 
 permissions:
   contents: read

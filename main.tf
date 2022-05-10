@@ -35,7 +35,7 @@ resource "google_compute_instance" "minecraft" {
   machine_type            = "n1-highcpu-2"
   zone                    = local.zone
   tags                    = ["minecraft"]
-  metadata_startup_script = "docker run -d --name mcserver -p 42865:25565 -e EULA=TRUE -e VERSION=1.18.2 -e MEMORY=1536m -e OPS=rinsuki,takanakahiko -v /var/minecraft:/data itzg/minecraft-server:latest;"
+  metadata_startup_script = "docker run -d --rm --name mcserver -p 42865:25565 -e EULA=TRUE -e VERSION=1.18.2 -e MEMORY=1536m -e OPS=rinsuki,takanakahiko -v /var/minecraft:/data itzg/minecraft-server:latest;"
   metadata = {
     enable-oslogin  = "TRUE"
     shutdown-script = "docker exec mcserver rcon-cli stop"
@@ -67,7 +67,7 @@ resource "google_service_account" "minecraft" {
 
 resource "google_compute_disk" "minecraft" {
   name  = "minecraft-disk"
-  type  = "pd-standard"
+  type  = "pd-ssd"
   zone  = local.zone
   image = "cos-cloud/cos-stable"
 }

@@ -32,7 +32,7 @@ provider "google-beta" {
 
 resource "google_compute_instance" "minecraft" {
   name                    = "minecraft-instance"
-  machine_type            = "n1-standard-2"
+  machine_type            = "n1-highcpu-2"
   zone                    = local.zone
   tags                    = ["minecraft"]
   metadata_startup_script = "docker run -d --rm --name mcserver -p 42865:25565 -e EULA=TRUE -e VERSION=1.18.2 -e MEMORY=4G -e OPS=rinsuki,takanakahiko -v /var/minecraft:/data itzg/minecraft-server:latest;"
